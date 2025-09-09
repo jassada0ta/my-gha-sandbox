@@ -2,24 +2,13 @@ name: Master Build 1
 on:
   workflow_dispatch:
 
+run-name: B${{github.run_number}}-Master Build 1
+
 jobs:
   build:
     # The job will run on the latest version of Ubuntu.
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Create a build number file.
-      # We use the unique 'github.run_number' for this workflow run as the build number.
-      # This number is then written to a file named 'build_number.txt'.
-      - name: Create build number file
-        run: |
-          mkdir build_output
-          echo ${{ github.run_number }} > build_output/build_number.txt
-
-      # Step 2: Upload the build number as an artifact.
-      # This makes the 'build_number.txt' file available to other workflows.
-      - name: Upload build number artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-number-artifact
-          path: build_output/build_number.txt
+      - name: Print run number
+        run: echo ${{ github.run_number }}

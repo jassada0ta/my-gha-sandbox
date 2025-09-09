@@ -7,41 +7,15 @@ on:
 
 # Set a dynamic run name for this workflow.
 # It uses the run number from the triggering "Build1" workflow.
-run-name: Using Build1's Number - ${{ github.event.workflow_run.run_number }}
+run-name: B${{ github.event.workflow_run.run_number}} - Master Build 2
 
 jobs:
-  use_build_number_and_trigger_build3:
-    # This job only runs if the "Build1" workflow was successful.
+  build:
+    # The job will run on the latest version of Ubuntu.
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    # Grant permissions to trigger another workflow
-    permissions:
-      actions: write
 
     steps:
-      # Step 1: Download the artifact from the "Build1" workflow run.
-      # We need to specify the ID of the triggering workflow run to get the correct artifact.
-      - name: Download build number artifact from Build1
-        uses: actions/download-artifact@v4
-        with:
-          name: build-number-artifact
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: ${{ github.event.workflow_run.id }}
-
-      # Step 2: Read the build number from the file and prepare it for the next step.
-      - name: Read build number from file
-        id: build_number_step
-        run: |
-          BUILD_NUMBER=$(cat build_number.txt)
-          echo "Build number from Build1 is: $BUILD_NUMBER"
-          echo "build_number=$BUILD_NUMBER" >> $GITHUB_OUTPUT
-
-      # Step 3: Trigger the Build3 workflow and pass the build number.
-      - name: Trigger Build3 workflow
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Use the GitHub CLI to manually trigger build3.yml
-          # We pass the build number as an input parameter.
-          gh workflow run master_build3.yml --ref ${{ github.ref }} -f build_number=${{ github.event.workflow_run.run_number }}
-
+      - name: Print prev workflow run-name
+        run: echo ${{ github.event.workflow_run.run_name }}
+      - name: Echo prev workflow_run
+        run: echo "prev workflow_run ${{ toJSON(github.event.workflow_run) }}"
