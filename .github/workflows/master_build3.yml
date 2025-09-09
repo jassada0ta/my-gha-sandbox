@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     # This job will only run if the triggering "Build2" workflow was successful.
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    permissions:
+      actions: read
     steps:
       # Step 1: Download the artifact that was re-uploaded by the "Build2" workflow.
       - name: Download artifact from Build2

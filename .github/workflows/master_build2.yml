@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     # This job will only run if the triggering "Build1" workflow was successful.
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    permissions:
+      actions: read
     steps:
       # Step 1: Download the "build-data" artifact from the completed "Build1" run.
       # The actions/download-artifact action automatically fetches artifacts from the triggering workflow
