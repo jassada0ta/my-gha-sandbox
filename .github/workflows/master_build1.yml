@@ -2,13 +2,19 @@ name: Master Build 1
 on:
   workflow_dispatch:
 
-run-name: B${{github.run_number}}-Master Build 1
-
 jobs:
-  build:
-    # The job will run on the latest version of Ubuntu.
+  create_and_save_run_number:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Print run number
-        run: echo ${{ github.run_number }}
+      # Step 1: Get the current workflow's run number and save it to a text file.
+      # The github.run_number context variable provides a unique number for each run of a workflow.
+      - name: Save Run Number to file
+        run: echo "${{ github.run_number }}" > save_data.txt
+
+      # Step 2: Upload the text file as an artifact named "build-data".
+      # This artifact will be available for other workflows to download.
+      - name: Upload Run Number Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-data
+          path: save_data.txt

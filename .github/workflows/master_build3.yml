@@ -5,13 +5,21 @@ on:
     types:
       - completed
 
-# Set a dynamic run name for this workflow.
-# It uses the build number that was passed as an input.
-run-name: B${{ github.event.workflow_run.run_number}} - Master Build 3
-
 jobs:
-  use_build_number:
+  use_data_from_build2:
     runs-on: ubuntu-latest
+    # This job will only run if the triggering "Build2" workflow was successful.
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
-      - name: Echo prev workflow_run
-        run: echo "prev workflow_run ${{ toJSON(github.event.workflow_run) }}"
+      # Step 1: Download the artifact that was re-uploaded by the "Build2" workflow.
+      - name: Download artifact from Build2
+        uses: actions/download-artifact@v4
+        with:
+          name: build-data-for-build3
+
+      # Step 2: Read the data from the file and use it in a step.
+      # This demonstrates the successful chaining of data from Build1 -> Build2 -> Build3.
+      - name: Read and Use Run Number from file
+        run: |
+          RUN_NAME_VALUE=$(cat save_data.txt)
+          echo "Using Run Name from Build1 (via Build2): $RUN_NAME_VALUE"
