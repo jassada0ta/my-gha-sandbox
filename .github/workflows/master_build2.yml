@@ -1,7 +1,7 @@
 name: Master Build 2
 on:
   workflow_run:
-    workflows: ["Build1"]
+    workflows: ["Master Build 1"]
     types:
       - completed
 
