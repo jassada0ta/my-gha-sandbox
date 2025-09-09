@@ -1,0 +1,20 @@
+name: Master Build 2
+run-name: ${{github.event.inputs.build_number}}
+on:
+  # This workflow is triggered by another workflow
+  workflow_dispatch:
+    # Define the inputs that this workflow accepts
+    inputs:
+      build_number:
+        description: 'The build number from the triggering workflow'
+        required: true
+        type: string
+
+jobs:
+  echo_build_number:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Echo received build number"
+        run: |
+          echo "The 'Finish Build' workflow has been triggered."
+          echo "Received build number from previous workflow is: ${{ github.event.inputs.build_number }}"

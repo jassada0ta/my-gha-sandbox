@@ -1,0 +1,29 @@
+name: Master Build 1
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build_and_trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Start Build"
+        run: echo "Starting the build process... The build number is ${{ github.run_number }}"
+
+      - name: "Simulate Build Steps"
+        run: |
+          echo "Running build tasks..."
+          sleep 5 # Simulate a task
+          echo "Build tasks complete."
+
+      - name: "Trigger Finish Build Workflow"
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          # The workflow file to trigger
+          workflow: master_build2.yml
+          # The inputs to pass to the triggered workflow
+          inputs: '{"build_number": "${{ github.run_number }}"}'
+          # IMPORTANT: The default GITHUB_TOKEN may not have permission to trigger workflows.
+          # You may need to create a Personal Access Token (PAT) with 'repo' scope
+          # and add it as a secret (e.g., GH_PAT) to your repository.
+          token: ${{ secrets.GITHUB_TOKEN }}
