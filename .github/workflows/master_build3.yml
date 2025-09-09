@@ -1,0 +1,23 @@
+name: Master Build 3
+on:
+  workflow_dispatch:
+    inputs:
+      build_number:
+        description: 'The build number from Build1, passed via Build2'
+        required: true
+        type: string
+
+# Set a dynamic run name for this workflow.
+# It uses the build number that was passed as an input.
+run-name: Using Build1's Number - ${{ github.event.inputs.build_number }}
+
+jobs:
+  use_build_number:
+    # This job will run on the latest version of Ubuntu.
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Echo the build number received from the input.
+      - name: Echo build number from Build1
+        run: |
+          echo "Build number received from Build1 (via Build2) is: ${{ github.event.inputs.build_number }}"

@@ -1,20 +1,47 @@
 name: Master Build 2
-run-name: ${{github.event.inputs.build_number}}
 on:
-  # This workflow is triggered by another workflow
-  workflow_dispatch:
-    # Define the inputs that this workflow accepts
-    inputs:
-      build_number:
-        description: 'The build number from the triggering workflow'
-        required: true
-        type: string
+  workflow_run:
+    workflows: ["Build1"]
+    types:
+      - completed
+
+# Set a dynamic run name for this workflow.
+# It uses the run number from the triggering "Build1" workflow.
+run-name: Using Build1's Number - ${{ github.event.workflow_run.run_number }}
 
 jobs:
-  echo_build_number:
+  use_build_number_and_trigger_build3:
+    # This job only runs if the "Build1" workflow was successful.
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    # Grant permissions to trigger another workflow
+    permissions:
+      actions: write
+
     steps:
-      - name: "Echo received build number"
+      # Step 1: Download the artifact from the "Build1" workflow run.
+      # We need to specify the ID of the triggering workflow run to get the correct artifact.
+      - name: Download build number artifact from Build1
+        uses: actions/download-artifact@v4
+        with:
+          name: build-number-artifact
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      # Step 2: Read the build number from the file and prepare it for the next step.
+      - name: Read build number from file
+        id: build_number_step
         run: |
-          echo "The 'Finish Build' workflow has been triggered."
-          echo "Received build number from previous workflow is: ${{ github.event.inputs.build_number }}"
+          BUILD_NUMBER=$(cat build_number.txt)
+          echo "Build number from Build1 is: $BUILD_NUMBER"
+          echo "build_number=$BUILD_NUMBER" >> $GITHUB_OUTPUT
+
+      # Step 3: Trigger the Build3 workflow and pass the build number.
+      - name: Trigger Build3 workflow
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Use the GitHub CLI to manually trigger build3.yml
+          # We pass the build number as an input parameter.
+          gh workflow run master_build3.yml --ref ${{ github.ref }} -f build_number=${{ github.event.workflow_run.run_number }}
+

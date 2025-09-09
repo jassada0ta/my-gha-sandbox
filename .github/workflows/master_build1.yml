@@ -1,29 +1,25 @@
 name: Master Build 1
 on:
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
-  build_and_trigger:
+  build:
+    # The job will run on the latest version of Ubuntu.
     runs-on: ubuntu-latest
+
     steps:
-      - name: "Start Build"
-        run: echo "Starting the build process... The build number is ${{ github.run_number }}"
-
-      - name: "Simulate Build Steps"
+      # Step 1: Create a build number file.
+      # We use the unique 'github.run_number' for this workflow run as the build number.
+      # This number is then written to a file named 'build_number.txt'.
+      - name: Create build number file
         run: |
-          echo "Running build tasks..."
-          sleep 5 # Simulate a task
-          echo "Build tasks complete."
+          mkdir build_output
+          echo ${{ github.run_number }} > build_output/build_number.txt
 
-      - name: "Trigger Finish Build Workflow"
-        uses: benc-uk/workflow-dispatch@v1
+      # Step 2: Upload the build number as an artifact.
+      # This makes the 'build_number.txt' file available to other workflows.
+      - name: Upload build number artifact
+        uses: actions/upload-artifact@v4
         with:
-          # The workflow file to trigger
-          workflow: master_build2.yml
-          # The inputs to pass to the triggered workflow
-          inputs: '{"build_number": "${{ github.run_number }}"}'
-          # IMPORTANT: The default GITHUB_TOKEN may not have permission to trigger workflows.
-          # You may need to create a Personal Access Token (PAT) with 'repo' scope
-          # and add it as a secret (e.g., GH_PAT) to your repository.
-          token: ${{ secrets.GITHUB_TOKEN }}
+          name: build-number-artifact
+          path: build_output/build_number.txt
