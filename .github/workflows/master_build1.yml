@@ -1,20 +1,19 @@
 name: Master Build 1
+run-name: ${{ inputs.triggering_workflow_run_id != '' && format('`#{1}` MasterBuild 1 - Dev-Build by workflow id `# {0}`', inputs.triggering_workflow_run_id, github.run_number) || github.event_name == 'workflow_dispatch' && format('`#{0}` MasterBuild 1 - Dev-Build', github.run_number) || format('`#{1}` {0}', github.event.head_commit.message, github.run_number)}}
+
 on:
   workflow_dispatch:
+    inputs:
+      triggering_workflow_run_id:
+        required: false
+        description: "Workflow run ID of the triggering workflow"
+  push:
+    branches:
+      - "master"
 
 jobs:
   create_and_save_run_number:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Get the current workflow's run number and save it to a text file.
-      # The github.run_number context variable provides a unique number for each run of a workflow.
-      - name: Save Run Number to file
-        run: echo "${{ github.run_number }}" > save_data.txt
-
-      # Step 2: Upload the text file as an artifact named "build-data".
-      # This artifact will be available for other workflows to download.
-      - name: Upload Run Number Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-data
-          path: save_data.txt
+      - name: Print Run Number
+        run: echo "Build 1 Run_number ${{ github.run_number }}"

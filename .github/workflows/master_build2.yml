@@ -1,39 +1,13 @@
 name: Master Build 2
+run-name: ${{ github.event.workflow_run.display_title }}
 on:
   workflow_run:
     workflows: [ "Master Build 1" ]
     types:
       - completed
-
 jobs:
-  use_data_from_build1:
+  create_and_save_run_number:
     runs-on: ubuntu-latest
-    # This job will only run if the triggering "Build1" workflow was successful.
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    permissions:
-      actions: read
     steps:
-      # Step 1: Download the "build-data" artifact from the completed "Build1" run.
-      # The actions/download-artifact action automatically fetches artifacts from the triggering workflow
-      # when used in a `workflow_run` event.
-      - name: Download artifact from Build1
-        uses: actions/download-artifact@v4
-        with:
-          name: build-data
-
-      # Step 2: Read the content of the downloaded file and use it.
-      # Note: The top-level workflow 'run-name' cannot be set dynamically from a file's content,
-      # as it is evaluated before any jobs start. Instead, we "use" the data within a step,
-      # fulfilling the core requirement of the request.
-      - name: Read and Use Run Number from file
-        run: |
-          RUN_NAME_VALUE=$(cat save_data.txt)
-          echo "Using Run Name from Build1: $RUN_NAME_VALUE"
-
-      # Step 3: Re-upload the artifact so that "Build3" can access it.
-      # We give it a new name to avoid any potential conflicts.
-      - name: Re-upload artifact for Build3
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-data-for-build3
-          path: save_data.txt
+      - name: Print Run Number
+        run: echo "Build 2 Run_number ${{ github.run_number }}"
