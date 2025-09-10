@@ -9,7 +9,7 @@ on:
         description: "Workflow run ID of the triggering workflow"
   push:
     branches:
-      - "master"
+      - "main"
 
 jobs:
   create_and_save_run_number:
