@@ -1,6 +1,6 @@
 name: reuse-workflow.yml
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       test-script:
         description: 'Test script to run'
