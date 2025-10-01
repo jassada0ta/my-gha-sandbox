@@ -1,0 +1,9 @@
+name: test-caller-workflow.yml
+on:
+  workflow_dispatch:
+
+jobs:
+  run-test:
+    uses: ./.github/workflows/reuse-workflow.yml@main
+    with:
+      test-script: 'echo "TEST RUNNER"'
