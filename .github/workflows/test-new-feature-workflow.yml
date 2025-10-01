@@ -1,0 +1,16 @@
+name: test-new-feature-workflow.yml
+on:
+  workflow_dispatch:
+    inputs:
+      test-param-1:
+        type: string
+        required: true
+        description: 'Test parameter 1'
+
+jobs:
+  exec-workflow:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "This is input"
+          echo ${{inputs.test-param-1}}
