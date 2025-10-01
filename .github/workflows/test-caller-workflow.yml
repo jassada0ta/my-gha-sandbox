@@ -4,6 +4,6 @@ on:
 
 jobs:
   run-test:
-    uses: ./.github/workflows/reuse-workflow.yml@main
+    uses: ./.github/workflows/reuse-workflow.yml
     with:
       test-script: 'echo "TEST RUNNER"'
