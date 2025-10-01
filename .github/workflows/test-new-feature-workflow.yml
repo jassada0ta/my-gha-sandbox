@@ -1,11 +1,6 @@
 name: test-new-feature-workflow.yml
 on:
-  workflow_dispatch:
-    inputs:
-      test-param-1:
-        type: string
-        required: true
-        description: 'Test parameter 1'
+  push:
 
 jobs:
   exec-workflow:
@@ -13,4 +8,4 @@ jobs:
     steps:
       - run: |
           echo "This is input"
-          echo ${{inputs.test-param-1}}
+          echo "TEST SCRIPT"
