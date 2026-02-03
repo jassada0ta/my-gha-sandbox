@@ -1,0 +1,51 @@
+name: readjson-workflow.yml
+on:
+  workflow_dispatch:
+    inputs:
+      config_file_path:
+        type: string
+        required: false
+        default: 'workflow-configs.yml'
+        description: Path to workflow configs file
+      prerelease_version:
+        type: string
+        required: true
+        description: Pre release version
+
+jobs:
+  extract-workflow-configs-params:
+    name: Extract parameters from workflow config file
+    runs-on: ubuntu-latest
+    outputs:
+      test_release_url: ${{steps.parse-yaml.outputs.test_release_url}}
+      test_staging_url: ${{steps.parse-yaml.outputs.test_staging_url}}
+      test_script: ${{steps.parse-yaml.outputs.test_script}}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Read JSON and Set Step Outputs
+        id: parse-yaml
+        run: |
+          TEST_RELEASE_BASE_URL=$(yq '.base_url.release' ${{inputs.config_file_path}})
+          TEST_STAGING_BASE_URL=$(yq '.base_url.staging' ${{inputs.config_file_path}})
+          OVERRIDE_PARAM_NAME=$(yq '.override_param_name' ${{inputs.config_file_path}})
+          TEST_ENTRY_POINT=$(yq '.test_entry_point' ${{inputs.config_file_path}})
+
+          TEST_RELEASE_URL="${TEST_RELEASE_BASE_URL}/index.html?${OVERRIDE_PARAM_NAME}=${{inputs.prerelease_version}}"
+          TEST_STAGING_URL="${TEST_STAGING_BASE_URL}/index.html?${OVERRIDE_PARAM_NAME}=${{inputs.prerelease_version}}"
+
+          echo "test_release_url=$TEST_RELEASE_URL" >> $GITHUB_OUTPUT
+          echo "test_staging_url=$TEST_STAGING_URL" >> $GITHUB_OUTPUT
+          echo "test_script=$TEST_ENTRY_POINT" >> $GITHUB_OUTPUT
+          
+  printout-data:
+    name: Printout Data
+    runs-on: ubuntu-latest
+    needs: extract-workflow-configs-params
+    steps:
+      - name: Printout Data
+        id: printout-data
+        run: |
+          echo "Release URL: ${{needs.extract-workflow-configs-params.outputs.test_release_url}}"
+          echo "Staging URL: ${{needs.extract-workflow-configs-params.outputs.test_staging_url}}"
+          echo "Test Script: ${{needs.extract-workflow-configs-params.outputs.test_script}}"

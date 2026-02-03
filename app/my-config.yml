@@ -1,0 +1,6 @@
+base_url:
+  release : "http://booking-sandbox-release.uat.jetstar.com"
+  staging : "http://booking-sandbox-staging.uat.jetstar.com"
+s3_base_target : "booking-sandbox-release.uat.jetstar.com/sandcastle"
+override_param_name : "mfe-override-sandcastle"
+test_entry_point : "sandbox:NewSeat_Sandbox1"

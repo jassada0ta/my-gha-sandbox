@@ -6,13 +6,19 @@ on:
         description: 'Test script to run'
         type: string
         required: true
-
+    outputs:
+      new_version:
+      value: ${{ jobs.execute-test.outputs.new_version }}
 jobs:
   execute-test:
     runs-on: ubuntu-latest
+    outputs:
+      new_version: ${{ steps.run-test.outputs.new_version }}
     steps:
       - name: Run Test
+        id: run-test
         run: |
           echo "Start execute test"
           ${{inputs.test-script}}
           echo "Finish"
+          echo "

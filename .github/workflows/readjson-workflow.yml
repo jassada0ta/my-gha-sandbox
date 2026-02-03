@@ -1,0 +1,13 @@
+name: readjson-workflow.yml
+on:
+  workflow_dispatch:
+
+jobs:
+  read-json:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract JSON
+        id: extract-json
+        run: |
+          JSON = 
+    
