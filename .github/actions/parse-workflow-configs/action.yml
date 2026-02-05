@@ -16,7 +16,7 @@ outputs:
     value: ${{steps.parse-yaml.outputs.test_staging_url}}
   test_script: 
     description: "Test script" 
-    value: {{steps.parse-yaml.outputs.test_script}}
+    value: ${{steps.parse-yaml.outputs.test_script}}
   s3_base_target:
     description: "S3 base target"
     value: ${{steps.parse-yaml.outputs.s3_base_target}}
