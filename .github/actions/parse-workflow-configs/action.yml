@@ -1,0 +1,34 @@
+name: Parse parameters from workflow config file
+inputs:
+  config_file_path:
+    description: Path to config file
+    required: false
+    default: 'workflow-configs.yml'
+  prerelease_version:
+    description: Pre release version
+    required: true
+outputs:
+  test_release_url: ${{steps.parse-yaml.outputs.test_release_url}}
+  test_staging_url: ${{steps.parse-yaml.outputs.test_staging_url}}
+  test_script: ${{steps.parse-yaml.outputs.test_script}}
+  s3_base_target: ${{steps.parse-yaml.outputs.s3_base_target}}
+runs:
+  using: "composite"
+  steps:    
+    - name: Read Yaml and Set Step Outputs
+      id: parse-yaml
+      shell: bash
+      run: |
+        TEST_RELEASE_BASE_URL=$(yq '.base_url.release' ${{inputs.config_file_path}})
+        TEST_STAGING_BASE_URL=$(yq '.base_url.staging' ${{inputs.config_file_path}})
+        OVERRIDE_PARAM_NAME=$(yq '.override_param_name' ${{inputs.config_file_path}})
+        TEST_ENTRY_POINT=$(yq '.test_entry_point' ${{inputs.config_file_path}})
+        S3_BASE_TARGET=$(yq '.s3_base_target' ${{inputs.config_file_path}})
+        
+        TEST_RELEASE_URL="${TEST_RELEASE_BASE_URL}/index.html?${OVERRIDE_PARAM_NAME}=${{inputs.prerelease_version}}"
+        TEST_STAGING_URL="${TEST_STAGING_BASE_URL}/index.html?${OVERRIDE_PARAM_NAME}=${{inputs.prerelease_version}}"
+        
+        echo "test_release_url=$TEST_RELEASE_URL" >> $GITHUB_OUTPUT
+        echo "test_staging_url=$TEST_STAGING_URL" >> $GITHUB_OUTPUT
+        echo "test_script=$TEST_ENTRY_POINT" >> $GITHUB_OUTPUT
+        echo "s3_base_target=$S3_BASE_TARGET" >> $GITHUB_OUTPUT
