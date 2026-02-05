@@ -49,7 +49,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
       - id: parse-workflow-configs
-        uses: jassada0ta/my-gha-sandbox/.github/actions/parse-workflow-configs/action.yml@main
+        uses: jassada0ta/my-gha-sandbox/.github/actions/parse-workflow-configs@main
         with: 
           config_file_path: ${{inputs.config_file_path}}
           prerelease_version: ${{inputs.prerelease_version}}
