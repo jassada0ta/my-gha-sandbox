@@ -8,10 +8,18 @@ inputs:
     description: Pre release version
     required: true
 outputs:
-  test_release_url: ${{steps.parse-yaml.outputs.test_release_url}}
-  test_staging_url: ${{steps.parse-yaml.outputs.test_staging_url}}
-  test_script: ${{steps.parse-yaml.outputs.test_script}}
-  s3_base_target: ${{steps.parse-yaml.outputs.s3_base_target}}
+  test_release_url:
+    description: "Test release url" 
+    value: ${{steps.parse-yaml.outputs.test_release_url}}
+  test_staging_url:
+    description: "Test staging url"
+    value: ${{steps.parse-yaml.outputs.test_staging_url}}
+  test_script: 
+    description: "Test script" 
+    value: {{steps.parse-yaml.outputs.test_script}}
+  s3_base_target:
+    description: "S3 base target"
+    value: ${{steps.parse-yaml.outputs.s3_base_target}}
 runs:
   using: "composite"
   steps:    
