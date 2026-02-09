@@ -2,41 +2,12 @@ name: test-read-yaml.yml
 on:
   workflow_dispatch:
     inputs:
-      config_file_path:
-        type: string
-        required: false
-        default: 'workflow-configs.yml'
-        description: Path to workflow configs file
       prerelease_version:
         type: string
         required: true
         description: Pre release version
 
 jobs:
-#  extract-workflow-configs-params:
-#    name: Extract parameters from workflow config file
-#    runs-on: ubuntu-latest
-#    outputs:
-#      test_release_url: ${{steps.parse-yaml.outputs.test_release_url}}
-#      test_staging_url: ${{steps.parse-yaml.outputs.test_staging_url}}
-#      test_script: ${{steps.parse-yaml.outputs.test_script}}
-#    steps:
-#      - name: Checkout Repository
-#        uses: actions/checkout@v4
-#      - name: Read JSON and Set Step Outputs
-#        id: parse-yaml
-#        run: |
-#          TEST_RELEASE_BASE_URL=$(yq '.base_url.release' ${{inputs.config_file_path}})
-#          TEST_STAGING_BASE_URL=$(yq '.base_url.staging' ${{inputs.config_file_path}})
-#          OVERRIDE_PARAM_NAME=$(yq '.override_param_name' ${{inputs.config_file_path}})
-#          TEST_ENTRY_POINT=$(yq '.test_entry_point' ${{inputs.config_file_path}})
-#
-#          TEST_RELEASE_URL="${TEST_RELEASE_BASE_URL}/index.html?${OVERRIDE_PARAM_NAME}=${{inputs.prerelease_version}}"
-#          TEST_STAGING_URL="${TEST_STAGING_BASE_URL}/index.html?${OVERRIDE_PARAM_NAME}=${{inputs.prerelease_version}}"
-#
-#          echo "test_release_url=$TEST_RELEASE_URL" >> $GITHUB_OUTPUT
-#          echo "test_staging_url=$TEST_STAGING_URL" >> $GITHUB_OUTPUT
-#          echo "test_script=$TEST_ENTRY_POINT" >> $GITHUB_OUTPUT  
   extract-configs:
     runs-on: ubuntu-latest
     name: Extract Workflow Configs
@@ -51,7 +22,7 @@ jobs:
       - id: parse-workflow-configs
         uses: jassada0ta/my-gha-sandbox/.github/actions/parse-workflow-configs@main
         with: 
-          config_file_path: ${{inputs.config_file_path}}
+          working-directory: './apps'
           prerelease_version: ${{inputs.prerelease_version}}
   printout-data:
     name: Printout Data
